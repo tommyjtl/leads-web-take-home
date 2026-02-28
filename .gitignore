@@ -39,9 +39,9 @@ next-env.d.ts
 
 # project
 .vscode/
-.specs/
+
 # local SQLite DB
-/data/
+/data/*.db*
 
 # uploaded files (local storage)
 /public/uploads/
