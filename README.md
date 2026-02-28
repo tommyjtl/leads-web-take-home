@@ -1,6 +1,6 @@
 # Leads Form & Dashboardd
 
-**Disclaimer**: This project is a collaboration with Claude Sonnet 4.6, where I contribute the main architectural decisions, and it helps me scaffold the templates and locate the correct resources in the libraries' documentation. **This README is purely written by me.**
+**Disclaimer**: This project is a collaboration with Claude Sonnet 4.6, where I contribute the main architectural decisions, and it helps me scaffold the templates and locate the correct resources in the libraries' documentation. **This README is written by me.**
 
 ## System Design Overview
 
