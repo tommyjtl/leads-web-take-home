@@ -25,7 +25,7 @@ export const leadSubmitSchema = z.object({
     visaCategories: z
         .array(z.enum(VISA_CATEGORIES))
         .min(1, "Select at least one visa category"),
-    additionalInfo: z.string().optional(),
+    additionalInfo: z.string().min(1, "Please tell us how we can help"),
     // Filled after /api/upload succeeds – optional because user may not attach a file
     resumePath: z.string().optional(),
     resumeOriginalName: z.string().optional(),

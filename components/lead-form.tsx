@@ -98,6 +98,7 @@ export function LeadForm() {
     const [submitted, setSubmitted] = useState(false);
     const [resumeFile, setResumeFile] = useState<File | null>(null);
     const [uploadError, setUploadError] = useState<string | null>(null);
+    const [resumeFileError, setResumeFileError] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
 
     const submitMutation = trpc.leads.submit.useMutation({
@@ -116,10 +117,19 @@ export function LeadForm() {
             visaCategories: [],
             additionalInfo: "",
         },
+
     });
 
     const handleSubmit = async (values: LeadSubmitInput) => {
         setUploadError(null);
+
+        if (!resumeFile) {
+            setResumeFileError("Resume is required");
+            const el = document.getElementById("resume-upload-section");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+            return;
+        }
+        setResumeFileError(null);
 
         let resumePath: string | undefined;
         let resumeOriginalName: string | undefined;
@@ -138,7 +148,16 @@ export function LeadForm() {
                 resumePath = data.path;
                 resumeOriginalName = data.originalName;
             } catch (err) {
-                setUploadError(err instanceof Error ? err.message : "Upload failed");
+                const isNetworkError =
+                    err instanceof TypeError &&
+                    /failed to fetch|network ?request failed|load failed/i.test(err.message);
+                setUploadError(
+                    isNetworkError
+                        ? "Network error — please check your connection and try again."
+                        : err instanceof Error
+                            ? err.message
+                            : "Upload failed"
+                );
                 setIsUploading(false);
                 return;
             }
@@ -156,10 +175,20 @@ export function LeadForm() {
 
     const isBusy = isUploading || submitMutation.isPending;
 
+    const scrollToFirstError = () => {
+        const firstError = document.querySelector(
+            "[aria-invalid='true'], [data-invalid='true']"
+        ) as HTMLElement | null;
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+            firstError.focus({ preventScroll: true });
+        }
+    };
+
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(handleSubmit)}
+                onSubmit={form.handleSubmit(handleSubmit, scrollToFirstError)}
                 className="max-w-3xl mx-auto px-6 pb-24 space-y-14"
             >
                 {/* ── Section 1: Personal information ───────────────────────────── */}
@@ -266,7 +295,7 @@ export function LeadForm() {
                         />
 
                         {/* Resume / CV Upload */}
-                        <div className="space-y-1.5">
+                        <div id="resume-upload-section" className="space-y-1.5">
                             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                 Resume / CV
                             </label>
@@ -286,11 +315,15 @@ export function LeadForm() {
                                 className="sr-only"
                                 onChange={(e) => {
                                     setUploadError(null);
+                                    setResumeFileError(null);
                                     setResumeFile(e.target.files?.[0] ?? null);
                                 }}
                             />
                             {uploadError && (
                                 <p className="text-sm text-red-500">{uploadError}</p>
+                            )}
+                            {resumeFileError && (
+                                <p className="text-sm text-red-500">{resumeFileError}</p>
                             )}
                         </div>
                     </div>
@@ -371,7 +404,7 @@ export function LeadForm() {
                                 <FormControl>
                                     <Textarea
                                         placeholder={`- What is your current status and when does it expire?\n- What is your past immigration history?\n- Are you looking for long-term permanent residency or short-term employment visa or both? \n- Are there any timeline considerations?`}
-                                        className="resize-y min-h-[200px]"
+                                        className="resize-y min-h-[150px] max-h-[300px]"
                                         {...field}
                                     />
                                 </FormControl>

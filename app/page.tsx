@@ -7,8 +7,8 @@ const montserrat = Montserrat({ subsets: ["latin"] });
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-white">
-      {/* ── Hero Banner ──────────────────────────────────────────────────── */}
-      <div className="relative flex h-[400px] items-center justify-center bg-[#d9dea5] px-4 overflow-hidden">
+      {/* Hero Banner */}
+      <div className="relative flex h-[400px] items-center justify-center bg-[#d9dea5] px-10 overflow-hidden">
         {/* Side image — hidden on mobile */}
         <div className="absolute left-0 top-0 hidden 2xl:block h-full">
           <Image
@@ -36,7 +36,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── Public Lead Form ─────────────────────────────────────────────── */}
+      {/* Public Lead Form */}
       <div className="py-16">
         <LeadForm />
       </div>
